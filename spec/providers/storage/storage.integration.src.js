@@ -1,10 +1,13 @@
 var testUtil = require('../../util');
 
-module.exports = function(provider_url, setup, useArrayBuffer) { 
+module.exports = function(provider_url, setup, useArrayBuffer) {
   var helper;
+  if (typeof useArrayBuffer === 'undefined') {
+    useArrayBuffer = false;
+  }
 
   function beforeSet(str) {
-    if (typeof useArrayBuffer == 'undefined' || useArrayBuffer == false) {
+    if (!useArrayBuffer) {
       return str;
     } else {
       var buf = new ArrayBuffer(str.length*2); // 2 bytes for each char
@@ -17,9 +20,9 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
   }
 
   function afterGet(val) {
-    if (val == null) {
+    if (val === null || typeof val === 'undefined') {
       return null;
-    } else if (typeof useArrayBuffer == 'undefined' || useArrayBuffer == false) {
+    } else if (!useArrayBuffer) {
       return val;
     } else {
       return String.fromCharCode.apply(null, new Uint16Array(val));
@@ -29,7 +32,7 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
   beforeEach(function(done) {
     setup();
     var promise;
-    if (typeof useArrayBuffer == 'undefined' || useArrayBuffer == false) {
+    if (!useArrayBuffer) {
       promise = testUtil.providerFor(provider_url, "storage");
     } else {
       promise = testUtil.providerFor(provider_url, "storebuffer");
@@ -45,7 +48,7 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
     helper.removeListeners("s");
     testUtil.cleanupIframes();
   });
-  
+
   it("sets and gets keys", function(done) {
     var callbackOne = function(ret) {
       helper.call("s", "get", ["key-a"], callbackTwo);
@@ -99,7 +102,7 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
     };
     helper.call("s", "set", ["k1-d", beforeSet("v1-d")], callbackOne);
   });
-  
+
   it("resolves 'null' when getting unset keys", function (done) {
     var callbackOne = function (ret) {
       expect(ret).toEqual(null);
@@ -166,4 +169,3 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
     helper.call("s", "set", ["key", beforeSet("value")], callbackOne);
   });
 };
-
