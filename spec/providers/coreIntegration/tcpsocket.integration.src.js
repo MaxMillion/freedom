@@ -19,7 +19,7 @@ module.exports = function (provider, setup) {
     return new Uint8Array(arr).buffer;
   }
 
-  /*it("Works as a Client", function (done) {
+  it("Works as a Client", function (done) {
     socket.connect('www.google.com', 80, function () {
       console.warn('connected');
       var written = false;
@@ -35,7 +35,7 @@ module.exports = function (provider, setup) {
         socket.close(function () {});
       }, 500);
     });
-  });*/
+  });
 
   it("Gets info on client & server sockets", function (done) {
     var cspy = jasmine.createSpy('client'),

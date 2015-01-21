@@ -20,7 +20,7 @@ module.exports = function(provider_url, setup, useArrayBuffer) {
   }
 
   function afterGet(val) {
-    if (val === null || typeof val === 'undefined') {
+    if (val === null) {
       return null;
     } else if (!useArrayBuffer) {
       return val;
